@@ -1,0 +1,43 @@
+{
+    "name": "silvercommerce/abandoned-cart-notification",
+    "description": "Add configurable reminder notifications for customers who have added items to the basket but not yet paid",
+    "type": "silverstripe-vendormodule",
+    "homepage": "https://github.com/silvercommerce/abandoned-cart-notification",
+    "keywords": [
+        "silverstripe",
+        "notifications",
+        "orders",
+        "reminders"
+    ],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Morven Lewis-Everley",
+            "email": "morven@ilateral.co.uk"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/silvercommerce/abandoned-cart-notification/issues"
+    },
+    "require": {
+        "silverstripe/framework": "^4.4",
+        "silvercommerce/orders-admin": "1.5@dev",
+        "i-lateral/silverstripe-notifier": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7",
+        "squizlabs/php_codesniffer": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "SilverCommerce\\Notifications\\AbandonedCart\\": "src/",
+            "SilverCommerce\\Notifications\\AbandonedCart\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "lint": "vendor/bin/phpcs src/ tests/",
+        "lint-clean": "vendor/bin/phpcbf src/ tests/"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
