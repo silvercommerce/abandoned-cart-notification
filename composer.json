@@ -21,7 +21,7 @@
     },
     "require": {
         "silverstripe/framework": "^4.4",
-        "silvercommerce/orders-admin": "1.5@dev",
+        "silvercommerce/orders-admin": "1.5.x-dev",
         "i-lateral/silverstripe-notifier": "^1.0"
     },
     "require-dev": {
