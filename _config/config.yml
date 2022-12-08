@@ -1,0 +1,7 @@
+---
+Name: abandonedcartconfig
+---
+# allow configuring of notifications to users and a custom page type
+ilateral\SilverStripe\Notifier\Notifier:
+  registered_objects:
+    - SilverCommerce\ShoppingCart\Model\ShoppingCart
