@@ -6,6 +6,7 @@ use DateTime;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Control\Director;
 use SilverCommerce\ShoppingCart\Model\ShoppingCart;
+use SilverStripe\ORM\ArrayList;
 
 class AbandonedCartNotificationTask extends BuildTask
 {
@@ -16,6 +17,26 @@ class AbandonedCartNotificationTask extends BuildTask
     protected $title = 'Send Abandoned Cart Notifications';
 
     protected $description = '';
+
+    protected function getPossibleCarts(array $filters): ArrayList
+    {
+        $classes = AbandonedCartNotification::compileClassesAndFilters();
+        $list = ArrayList::create();
+
+        foreach ($classes as $class => $base_filter) {
+            $filter = array_merge($base_filter, $filters);
+
+            $objects = $class::get();
+
+            if (count($filters)) {
+                $objects = $objects->filter($filter);
+            }
+
+            $list->merge($objects);
+        }
+
+        return $list;
+    }
 
     public function run($request)
     {
@@ -28,6 +49,8 @@ class AbandonedCartNotificationTask extends BuildTask
         foreach ($notifications as $notification) {
             $this->log("Processing notifications for: {$notification->getSummary()}");
 
+            $filters = [];
+
             /**
              * @var AbandonedCartNotification $notification
              * @var TimePassedRule $rule
@@ -38,45 +61,41 @@ class AbandonedCartNotificationTask extends BuildTask
                 }
 
                 // Find the date relevent to this notification's rules
-                $now = new DateTime();
-                $now->modify("- {$rule->Value}");
-                $field = $rule->FieldName;
-
-                // Find any carts that match this date
-                $carts = ShoppingCart::get()
-                    ->filter([
-                        $field => $now->format('Y-m-d'),
-                        'Email:not' => null
-                    ]);
-        
-                // If any carts exist, send out the relevent
-                // notification via sendManually
-                if (!$carts->exists()) {
-                    continue;
-                }
-
-                $sent = 0;
-                $skipped = 0;
-
-                foreach ($carts as $cart) {
-                    $this->log("- Sent: {$sent}; Skipped: {$skipped}", true);
-
-                    /** @var ShoppingCart $cart */
-                    foreach ($notification->Types() as $notification_type) {
-                        if (!is_a($notification_type, AbandonedCartEmail::class)) {
-                            $skipped++;
-                            continue;
-                        }
-
-                        /** @var AbandonedCartEmail $notification_type  */
-                        $notification_type->setObject($cart);
-                        $notification_type->sendManually();
-                        $sent++;
-                    }
-                }
-
-                $this->log("- Sent: {$sent}; Skipped: {$skipped}");
+                $date = new DateTime();
+                $date->modify("- {$rule->Value}");
+                $filters[$rule->FieldName] = $date->format('Y-m-d');
             }
+
+            // Find any carts that match this date
+            $carts = $this->getPossibleCarts($filters);
+
+            // If any carts exist, send out the relevent
+            // notification via sendManually
+            if (!$carts->exists()) {
+                continue;
+            }
+
+            $sent = 0;
+            $skipped = 0;
+
+            foreach ($carts as $cart) {
+                $this->log("- Sent: {$sent}; Skipped: {$skipped}", true);
+
+                /** @var ShoppingCart $cart */
+                foreach ($notification->Types() as $notification_type) {
+                    if (!is_a($notification_type, AbandonedCartEmail::class)) {
+                        $skipped++;
+                        continue;
+                    }
+
+                    /** @var AbandonedCartEmail $notification_type  */
+                    $notification_type->setObject($cart);
+                    $notification_type->sendManually();
+                    $sent++;
+                }
+            }
+
+            $this->log("- Sent: {$sent}; Skipped: {$skipped}");
         }
     }
 
