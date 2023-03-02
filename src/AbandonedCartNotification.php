@@ -9,6 +9,7 @@ use SilverCommerce\ShoppingCart\Model\ShoppingCart;
 use ilateral\SilverStripe\Notifier\Model\Notification;
 use ilateral\SilverStripe\Notifier\Model\NotificationRule;
 use ilateral\SilverStripe\Notifier\Types\NotificationType;
+use SilverCommerce\OrdersAdmin\Model\Estimate;
 use SilverCommerce\OrdersAdmin\Model\Invoice;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\ArrayList;
@@ -16,6 +17,14 @@ use SilverStripe\ORM\ArrayList;
 class AbandonedCartNotification extends Notification
 {
     private static $table_name = "Notifications_AbandonedCartNotification";
+
+    /**
+     * Should rules and types be automatically added
+     * to notifications on creation?
+     *
+     * @var bool
+     */
+    private static $auto_add_one_create = true;
 
     private static $carts_to_monitor = [
         ShoppingCart::class,
@@ -31,6 +40,10 @@ class AbandonedCartNotification extends Notification
 
     private static $disallow_types = [
         NotificationType::class
+    ];
+
+    private static $defaults = [
+        'BaseClassName' => Estimate::class
     ];
 
     /**
@@ -112,7 +125,6 @@ class AbandonedCartNotification extends Notification
                      ReadonlyField::create('ObjectType'),
                      'Rules'
                 );
-                
 
                 /** @var FieldList $fields */
                 $fields->replaceField(
@@ -127,5 +139,45 @@ class AbandonedCartNotification extends Notification
         );
 
         return parent::getCMSFields();
+    }
+
+    protected function setupDefaultRule(): NotificationRule
+    {
+        $rule = TimePassedRule::create();
+        $rule->NotificationID = $this->ID;
+
+        $fields = $rule->getValidFields();
+        $fields = array_keys($fields);
+
+        if (count($fields) > 0) {
+            $rule->FieldName = reset($fields);
+        }
+
+        return $rule;
+    }
+
+    protected function setupDefaultTask(): NotificationType
+    {
+        $task = AbandonedCartEmail::create();
+        $task->NotificationID = $this->ID;
+        return $task;
+    }
+
+    public function onAfterWrite()
+    {
+        parent::onAfterWrite();
+
+        // If object just created and auto setup
+        // add a default rule and type
+        $created = $this->isChanged('ID');
+        $setup = $this->config()->get('auto_add_one_create');
+
+        if ($setup === true && $created === true) {
+            $rule = $this->setupDefaultRule();
+            $rule->write();
+
+            $task = $this->setupDefaultTask();
+            $task->write();
+        }
     }
 }

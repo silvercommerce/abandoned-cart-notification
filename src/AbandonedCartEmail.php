@@ -9,6 +9,7 @@ use SilverStripe\LinkField\Models\Link;
 use SilverStripe\LinkField\Form\LinkField;
 use SilverCommerce\ShoppingCart\Model\ShoppingCart;
 use ilateral\SilverStripe\Notifier\Types\EmailNotification;
+use SilverCommerce\OrdersAdmin\Model\Estimate;
 
 class AbandonedCartEmail extends EmailNotification
 {
@@ -25,7 +26,7 @@ class AbandonedCartEmail extends EmailNotification
     ];
 
     private static $alt_recipient_fields = [
-        ShoppingCart::class => ['Customer.Email']
+        Estimate::class => ['Customer.Email']
     ];
 
     public function populateDefaults()
