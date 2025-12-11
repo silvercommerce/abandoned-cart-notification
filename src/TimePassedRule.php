@@ -3,7 +3,7 @@
 namespace SilverCommerce\Notifications\AbandonedCart;
 
 use SilverStripe\Forms\FieldList;
-use ilateral\SilverStripe\Notifier\Model\NotificationRule;
+use DFT\SilverStripe\Notifier\Model\NotificationRule;
 
 class TimePassedRule extends NotificationRule
 {

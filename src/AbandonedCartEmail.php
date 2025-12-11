@@ -7,9 +7,9 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\LinkField\Models\Link;
 use SilverStripe\LinkField\Form\LinkField;
-use SilverCommerce\ShoppingCart\Model\ShoppingCart;
-use ilateral\SilverStripe\Notifier\Types\EmailNotification;
 use SilverCommerce\OrdersAdmin\Model\Estimate;
+use SilverCommerce\ShoppingCart\Model\ShoppingCart;
+use DFT\SilverStripe\Notifier\Types\EmailNotification;
 
 class AbandonedCartEmail extends EmailNotification
 {

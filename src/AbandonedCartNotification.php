@@ -4,15 +4,15 @@ namespace SilverCommerce\Notifications\AbandonedCart;
 
 use DateTime;
 use StatusChangeRule;
-use SilverStripe\Forms\DropdownField;
-use SilverCommerce\ShoppingCart\Model\ShoppingCart;
-use ilateral\SilverStripe\Notifier\Model\Notification;
-use ilateral\SilverStripe\Notifier\Model\NotificationRule;
-use ilateral\SilverStripe\Notifier\Types\NotificationType;
-use SilverCommerce\OrdersAdmin\Model\Estimate;
-use SilverCommerce\OrdersAdmin\Model\Invoice;
-use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\Forms\DropdownField;
+use SilverStripe\Forms\ReadonlyField;
+use SilverCommerce\OrdersAdmin\Model\Invoice;
+use SilverCommerce\OrdersAdmin\Model\Estimate;
+use DFT\SilverStripe\Notifier\Model\Notification;
+use SilverCommerce\ShoppingCart\Model\ShoppingCart;
+use DFT\SilverStripe\Notifier\Model\NotificationRule;
+use DFT\SilverStripe\Notifier\Types\NotificationType;
 
 class AbandonedCartNotification extends Notification
 {
