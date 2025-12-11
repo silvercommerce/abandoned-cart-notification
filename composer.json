@@ -23,7 +23,7 @@
         "silverstripe/framework": "^4.4",
         "silverstripe/linkfield": "^1.1",
         "silvercommerce/orders-admin": "1.5.x-dev",
-        "dft/silverstripe-notifier": "^1.0"
+        "dft/silverstripe-notifier": "^2"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7",
